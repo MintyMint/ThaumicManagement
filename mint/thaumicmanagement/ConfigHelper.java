@@ -19,6 +19,7 @@ public class ConfigHelper
 	public static int ToolRange;
 	public static int CorruptorTimer;
 	public static int CorruptorFluxAmount;
+	public static int blockPurifierID;
 	
 	public static String NodeMoverDistance;
 
@@ -34,21 +35,25 @@ public class ConfigHelper
 			("Tool Configuration", "Thaumic Management tool configuration settings");
 
 			// Generic config options
-            Property nodePurifierP = config.get("Tool Configuration", "node_purifier", 25000);
+            Property nodePurifierP = config.get("Tool Configuration", "node_purifier", 30000);
             NodePurifierID = nodePurifierP.getInt();
-			nodePurifierP.comment = "Node Purifier";
+			nodePurifierP.comment = "Node purifier wand";
 			
-            Property nodeCorruptorP = config.get("Tool Configuration", "node_corruptor", 25001);
+            Property nodeCorruptorP = config.get("Tool Configuration", "node_corruptor", 30001);
             NodeCorruptorID = nodeCorruptorP.getInt();
-			nodeCorruptorP.comment = "Node Corruptor";
+			nodeCorruptorP.comment = "Node corruptor wand";
 			
-            Property nodeTransmutorP = config.get("Tool Configuration", "node_transmutor", 25002);
+            Property nodeTransmutorP = config.get("Tool Configuration", "node_transmutor", 30002);
             NodeTransmutorID = nodeTransmutorP.getInt();
-			nodeTransmutorP.comment = "Node Transmutor [Not working yet!]";
+			nodeTransmutorP.comment = "Node transmuting mirror [Not working yet!]";
 			
-            Property nodeMoverP = config.get("Tool Configuration", "node_mover", 25003);
+            Property nodeMoverP = config.get("Tool Configuration", "node_mover", 30003);
             NodeMoverID = nodeMoverP.getInt();
-			nodeMoverP.comment = "Node Mover [Not working yet!]";
+			nodeMoverP.comment = "Node mover rune";
+			
+            Property blockPurifierP = config.get("Tool Configuration", "purifier_block", 800);
+            blockPurifierID = blockPurifierP.getInt();
+			blockPurifierP.comment = "Node purifier block";
 			
             Property toolRangeP = config.get("Tool Configuration", "tool_range", 32);
             ToolRange = toolRangeP.getInt();

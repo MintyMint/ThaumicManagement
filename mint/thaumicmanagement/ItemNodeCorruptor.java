@@ -29,19 +29,25 @@ public class ItemNodeCorruptor extends ItemTM
 	
     public ItemStack onItemRightClick(ItemStack itemstack, World world, EntityPlayer player)
     {
+       	if(itemstack.stackTagCompound == null)
+    	{
+    		itemstack.setTagCompound(new NBTTagCompound() );
+    	}
+
     	if (player.isSneaking() == false)
     	{
-    		itemstack.setTagCompound(new NBTTagCompound());
-    		itemstack.stackTagCompound.setInteger("NodeKey", ThaumcraftApi.getClosestAuraWithinRange(world, player.posX, player.posY, player.posZ, ConfigHelper.ToolRange));
-    		
-        	if (itemstack.stackTagCompound.getInteger("NodeKey") != -1)
+        	if (ThaumcraftApi.getClosestAuraWithinRange(world, player.posX, player.posY, player.posZ, ConfigHelper.ToolRange) != -1)
         	{
-        		player.addChatMessage("Seting Tool to use node key " + itemstack.stackTagCompound.getInteger("NodeKey"));
+        		itemstack.stackTagCompound.setInteger("NodeKey", ThaumcraftApi.getClosestAuraWithinRange(world, player.posX, player.posY, player.posZ, ConfigHelper.ToolRange) );
+        		player.addChatMessage("Wand locked on to node " + itemstack.stackTagCompound.getInteger("NodeKey"));
         	}
     		
         	else
         	{
-        		player.addChatMessage("Finding node...");
+                if (getSide() == Side.CLIENT)
+                {
+                	player.addChatMessage("Finding node...");
+                }
         	}
     	}
     	
@@ -66,34 +72,44 @@ public class ItemNodeCorruptor extends ItemTM
 
     public void onUsingItemTick(ItemStack itemstack, EntityPlayer player, int count)
     {    	  	
-    	AuraNode KeyedNode = ThaumcraftApi.getNodeCopy(itemstack.stackTagCompound.getInteger("NodeKey"));
-    	
-    	int TicksUsed = 0;
-
     	//Subtracts the max used count from the current used count
-    	//gives a number of ticks used instead of a count down from the max number of ticks useable
-    	TicksUsed = this.getMaxItemUseDuration(itemstack) - count;
+    	//gives a number of ticks used instead of a count down from the max number of ticks usable
+    	int ticksUsed = this.getMaxItemUseDuration(itemstack) - count;
     	
     	//checks to see if the number of ticks used [above] is a multiple of the configured number times 20 [20 ticks in a second]
-    	if (TicksUsed % (ConfigHelper.CorruptorTimer*20) == 0)
+    	if (ticksUsed % (ConfigHelper.CorruptorTimer*20) == 0)
     	{	
-    		if (KeyedNode != null)
+    		int nodeKey = itemstack.stackTagCompound.getInteger("NodeKey");
+    		AuraNode keyedNode = ThaumcraftApi.getNodeCopy(nodeKey);
+    		
+    		if (keyedNode != null)
     		{
-    			int RandomTagID = TriggeredWorld.rand.nextInt(48);
-    			EnumTag SelectedTag = EnumTag.get(RandomTagID);
+    			int randomTagID = TriggeredWorld.rand.nextInt(48);
+    			EnumTag selectedTag = EnumTag.get(randomTagID);
     			
-    			if (SelectedTag != EnumTag.FLUX)
+    			if (selectedTag != EnumTag.FLUX)
     			{
-    				player.addChatMessage("Your wand befouls the node with some " + SelectedTag.name + " aspect flux!");
-    				ThaumcraftApi.queueNodeChanges(0,0,0,false, new ObjectTags().add(SelectedTag, ConfigHelper.CorruptorFluxAmount), 0 ,0, 0);
+    				if (getSide() == Side.SERVER)
+    				{
+    					player.addChatMessage("Your wand befouls the node with some " + selectedTag.name + " aspect flux!");
+    				}
+    				
+    				ThaumcraftApi.queueNodeChanges(nodeKey , 0, 0, false, new ObjectTags().add(selectedTag, ConfigHelper.CorruptorFluxAmount), 0 ,0, 0);
     			}
     			
-    			else {player.addChatMessage("Your wand does nothing...");}
-    			
+    			else
+    			{
+    				player.addChatMessage("Your wand fizzles and does nothing...");
+    			}
     		}
     		
-    		else {player.addChatMessage("You can't corrupt a nonexistant node...");}
-    		
+    		else
+    		{
+         		if (getSide() == Side.SERVER)
+        		{
+        			if (keyedNode == null) {player.addChatMessage("Wand not set to a node id!");}
+        		}
+    		}
     	}
     }
 	

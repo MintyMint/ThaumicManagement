@@ -63,7 +63,7 @@ public class ThaumicManagement
 		GameRegistry.registerItem(NodeMover, "NodeMovingRune");
 		LanguageRegistry.addName(NodeMover, "Node Moving Rune");
 		
-		BlockNodePurifier = new BlockNodePurifier(697, Material.cloth).setUnlocalizedName("BlockNodePurifier");
+		BlockNodePurifier = new BlockNodePurifier(ConfigHelper.blockPurifierID, Material.cloth).setUnlocalizedName("BlockNodePurifier");
 		GameRegistry.registerBlock(BlockNodePurifier, "BlockPurifier");
 		LanguageRegistry.addName(BlockNodePurifier, "Node Purifying Block");	
 	}
